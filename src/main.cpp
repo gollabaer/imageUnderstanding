@@ -89,7 +89,7 @@ std::vector<dataItem> getDataSet(const std::vector<std::string> & classNames, co
                     dataItem tmp_dataItem;
                     tmp_dataItem.className = currentClassName;
                     tmp_dataItem.index = atoi(tmp.substr(6,4).c_str());
-                    tmp_dataItem.mat = cv::imread(classPath + "/" + tmp);
+                    tmp_dataItem.mat = cv::imread(classPath + "/" + tmp,  cv::IMREAD_COLOR);
                     std::cout << "ClassName: " << tmp_dataItem.className  << std::endl;
                     std::cout << "Index: " << tmp_dataItem.index << std::endl;
                     std::cout << "Mat.rows: " << tmp_dataItem.mat.rows << std::endl;
