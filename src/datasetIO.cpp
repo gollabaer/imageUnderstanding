@@ -7,6 +7,28 @@ namespace datasetIO{
 	{
 		return imread(filePath, cv::IMREAD_COLOR);
 	}
+    cv::Mat dataItem::getNormedCVMat() const
+    {
+        cv::Mat img = getCVMat();
+        const int height = img.rows;
+        const int width = img.cols;
+
+        const int size = std::min(height,width);
+
+        cv::Rect roi;
+        roi.x = width/2 - size/2;
+        roi.y = height/2 -size/2;
+        roi.width = size;
+        roi.height = size;
+
+        cv::Mat roiImg;
+
+        roiImg = img(roi).clone();
+
+        resize(roiImg, roiImg, cv::Size(150,150));
+
+        return roiImg;
+    }
 
 	//returns environment variable path to dataset
 	std::string getCaltechPath()

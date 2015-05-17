@@ -18,6 +18,7 @@ namespace datasetIO{
 		int index;
 
         cv::Mat getCVMat() const;
+        cv::Mat getNormedCVMat() const;
 	};
 
 	struct dataSet
