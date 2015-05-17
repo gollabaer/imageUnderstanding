@@ -29,15 +29,16 @@ int main ()
 
      datasetIO::dataSet dataset = datasetIO::getDataSet(classNames, caltechPath);
 
- 
-    
+    std::vector<cv::Mat> randomImgs = dataset.getRandomImagesFromClass(10,"binocular",5);
 
-	for (int i = 0; i < dataset.classDictonary[classNames[0]].size(); i++)
-	{
-		cv::namedWindow("rndImg", cv::WINDOW_AUTOSIZE);
-		cv::imshow("rndImg", dataset.classDictonary[classNames[0]][i].getCVMat());
-		cv::waitKey(100);
-	}
+    for(int i = 0; i < randomImgs.size(); ++i)
+    {
+        cv::namedWindow("rndImg" + i, cv::WINDOW_AUTOSIZE);
+        cv::imshow("rndImg" + i, randomImgs[i]);
+        cv::waitKey(10);
+    }
+
+    cv::waitKey(0);
 
     return 0;
 } 

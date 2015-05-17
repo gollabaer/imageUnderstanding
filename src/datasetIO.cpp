@@ -113,6 +113,46 @@ namespace datasetIO{
 
 		return dataset;
 
-	}
+    }
+
+    std::vector<cv::Mat> dataSet::getRandomImagesFromClass(int num, std::string className, unsigned int seed) const
+    {
+        std::vector<cv::Mat> randomImages;
+        if(classDictonary.find(className) != classDictonary.end())
+        {
+            const std::vector<dataItem> classItems = classDictonary.at(className);
+
+            if(num > classItems.size())
+            {
+                for(int i = 0; i < classItems.size(); ++i)
+                {
+                    // "random"
+                    randomImages.push_back(classItems[0].getCVMat());
+                }
+                std::cout << "[getRandomImagesFromClass] you wanted more images than the class has";
+                return randomImages;
+            }
+
+            std::srand(seed);
+
+            std::vector<int> randNumMemory;
+            for(int i = 0; i < num;)
+            {
+                int randNum = std::rand() % classItems.size();
+                if(std::find(randNumMemory.begin(),randNumMemory.end(),randNum) == randNumMemory.end())
+                {
+                    randNumMemory.push_back(randNum);
+                    ++i;
+
+                    randomImages.push_back(classItems[randNum].getCVMat());
+                }
+            }
+
+            return randomImages;
+        }
+
+        std::cout << "[getRandomImagesFromClass] No Class named: " << className;
+        return randomImages;
+    }
 
 }
