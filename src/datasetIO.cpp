@@ -38,11 +38,10 @@ namespace datasetIO{
 			if ((directoryItem = readdir(caltechTopDir)) != NULL)
 			{
 				std::string tmp(directoryItem->d_name);
-				std::cout << "Item: " << tmp << std::endl;
 
 				if (!(tmp == ".") && !(tmp == ".."))
 				{
-					std::cout << "Push: " << tmp << std::endl;
+                    std::cout << "Add Class: " << tmp << std::endl;
 					classNames.push_back(tmp);
 				}
 			}
@@ -54,47 +53,6 @@ namespace datasetIO{
 		}
 
 		return classNames;
-	}
-
-	std::vector <dataItem> getClassSet(const std::string & className, const std::string & caltechPath){
-		
-		std::vector<dataItem> classSet;
-
-		dirent* directoryItem;
-
-		const std::string currentClassName = className;
-
-		std::string classPath = caltechPath + "/" + currentClassName;
-		std::cout << "ClassPath:" << classPath << std::endl;
-
-		DIR* caltechClassDir = opendir(classPath.c_str());
-
-		while (caltechClassDir) {
-
-			if ((directoryItem = readdir(caltechClassDir)) != NULL)
-			{
-				std::string tmp(directoryItem->d_name);
-				std::cout << "Item: " << tmp << std::endl;
-
-				if (!(tmp == ".") && !(tmp == ".."))
-				{
-					dataItem tmp_dataItem;
-					tmp_dataItem.className = currentClassName;
-					tmp_dataItem.index = atoi(tmp.substr(6, 4).c_str());
-					tmp_dataItem.filePath = classPath + "/" + tmp;
-					std::cout << "ClassName: " << tmp_dataItem.className << std::endl;
-					std::cout << "Index: " << tmp_dataItem.index << std::endl;
-					classSet.push_back(tmp_dataItem);
-				}
-			}
-			else
-			{
-				closedir(caltechClassDir);
-				break;
-			}
-		}
-
-		return classSet;
 	}
 
 	dataSet getDataSet(const std::vector<std::string> & classNames, const std::string & caltechPath)
@@ -110,7 +68,6 @@ namespace datasetIO{
 			const std::string currentClassName = classNames[currentClassID];
 
 			std::string classPath = caltechPath + "/" + currentClassName;
-			std::cout << "ClassPath:" << classPath << std::endl;
 
 			DIR* caltechClassDir = opendir(classPath.c_str());
 
@@ -121,7 +78,6 @@ namespace datasetIO{
 				if ((directoryItem = readdir(caltechClassDir)) != NULL)
 				{
 					std::string tmp(directoryItem->d_name);
-					//std::cout << "Item: " << tmp << std::endl;
 
 					if (!(tmp == ".") && !(tmp == ".."))
 					{
@@ -129,8 +85,6 @@ namespace datasetIO{
 						tmp_dataItem.className = currentClassName;
 						tmp_dataItem.index = atoi(tmp.substr(6, 4).c_str());
 						tmp_dataItem.filePath = classPath + "/" + tmp;
-						//std::cout << "ClassName: " << tmp_dataItem.className << std::endl;
-						//std::cout << "Index: " << tmp_dataItem.index << std::endl;
 
 						data.push_back(tmp_dataItem);
 					}
