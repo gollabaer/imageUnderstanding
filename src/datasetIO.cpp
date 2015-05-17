@@ -3,7 +3,7 @@
 
 namespace datasetIO{
 
-	cv::Mat dataItem::getCVMat() 
+    cv::Mat dataItem::getCVMat() const
 	{
 		return imread(filePath, cv::IMREAD_COLOR);
 	}

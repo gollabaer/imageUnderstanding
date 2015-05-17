@@ -17,7 +17,7 @@ namespace datasetIO{
 		std::string className;
 		int index;
 
-		cv::Mat getCVMat();
+        cv::Mat getCVMat() const;
 	};
 
 	struct dataSet
