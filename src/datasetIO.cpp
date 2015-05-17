@@ -140,6 +140,28 @@ namespace datasetIO{
     std::vector<cv::Mat> dataSet::getRandomImagesFromClass(int num, std::string className, unsigned int seed) const
     {
         std::vector<cv::Mat> randomImages;
+        std::vector<dataItem> randomItemsFromClass = getRandomItemsFromClass(num,className,seed);
+        for(int i=0; i < randomItemsFromClass.size(); ++i)
+        {
+            randomImages.push_back(randomItemsFromClass[i].getCVMat());
+        }
+        return randomImages;
+    }
+
+    std::vector<cv::Mat> dataSet::getRandomNormedImagesFromClass(int num, std::string className, unsigned int seed) const
+    {
+        std::vector<cv::Mat> randomImages;
+        std::vector<dataItem> randomItemsFromClass = getRandomItemsFromClass(num,className,seed);
+        for(int i=0; i < randomItemsFromClass.size(); ++i)
+        {
+            randomImages.push_back(randomItemsFromClass[i].getNormedCVMat());
+        }
+        return randomImages;
+    }
+
+    std::vector<dataItem> dataSet::getRandomItemsFromClass(int num, std::string className, unsigned int seed) const
+    {
+        std::vector<dataItem> randomItems;
         if(classDictonary.find(className) != classDictonary.end())
         {
             const std::vector<dataItem> classItems = classDictonary.at(className);
@@ -149,10 +171,10 @@ namespace datasetIO{
                 for(int i = 0; i < classItems.size(); ++i)
                 {
                     // "random"
-                    randomImages.push_back(classItems[0].getCVMat());
+                    randomItems.push_back(classItems[0]);
                 }
-                std::cout << "[getRandomImagesFromClass] you wanted more images than the class has";
-                return randomImages;
+                std::cout << "[getRandomItemsFromClass] you wanted more items than the class has";
+                return randomItems;
             }
 
             std::srand(seed);
@@ -166,15 +188,15 @@ namespace datasetIO{
                     randNumMemory.push_back(randNum);
                     ++i;
 
-                    randomImages.push_back(classItems[randNum].getCVMat());
+                    randomItems.push_back(classItems[randNum]);
                 }
             }
 
-            return randomImages;
+            return randomItems;
         }
 
-        std::cout << "[getRandomImagesFromClass] No Class named: " << className;
-        return randomImages;
+        std::cout << "[getRandomItemsFromClass] No Class named: " << className;
+        return randomItems;
     }
 
 }
