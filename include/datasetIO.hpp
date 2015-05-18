@@ -1,4 +1,7 @@
 
+#ifndef DATASET_IO
+#define DATASET_IO
+
 #include <stdio.h>
 #include <string>
 #include <vector>
@@ -44,3 +47,5 @@ namespace datasetIO{
 
 
 }
+
+#endif DATASET_IO
