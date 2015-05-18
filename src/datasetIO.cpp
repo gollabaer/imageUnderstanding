@@ -7,25 +7,25 @@ namespace datasetIO{
 	{
 		return imread(filePath, cv::IMREAD_COLOR);
 	}
-    cv::Mat dataItem::getNormedCVMat() const
+    cv::Mat dataItem::getNormedCVMat(int size) const
     {
         cv::Mat img = getCVMat();
         const int height = img.rows;
         const int width = img.cols;
 
-        const int size = std::min(height,width);
+        const int min_size = std::min(height,width);
 
         cv::Rect roi;
-        roi.x = width/2 - size/2;
-        roi.y = height/2 -size/2;
-        roi.width = size;
-        roi.height = size;
+        roi.x = width/2 - min_size/2;
+        roi.y = height/2 -min_size/2;
+        roi.width = min_size;
+        roi.height = min_size;
 
         cv::Mat roiImg;
 
         roiImg = img(roi).clone();
 
-        resize(roiImg, roiImg, cv::Size(150,150));
+        resize(roiImg, roiImg, cv::Size(size,size));
 
         return roiImg;
     }
@@ -148,13 +148,13 @@ namespace datasetIO{
         return randomImages;
     }
 
-    std::vector<cv::Mat> dataSet::getRandomNormedImagesFromClass(int num, std::string className, unsigned int seed) const
+    std::vector<cv::Mat> dataSet::getRandomNormedImagesFromClass(int num, std::string className, unsigned int seed, int size) const
     {
         std::vector<cv::Mat> randomImages;
         std::vector<dataItem> randomItemsFromClass = getRandomItemsFromClass(num,className,seed);
         for(int i=0; i < randomItemsFromClass.size(); ++i)
         {
-            randomImages.push_back(randomItemsFromClass[i].getNormedCVMat());
+            randomImages.push_back(randomItemsFromClass[i].getNormedCVMat(size));
         }
         return randomImages;
     }
