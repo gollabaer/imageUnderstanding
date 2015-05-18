@@ -199,4 +199,49 @@ namespace datasetIO{
         return randomItems;
     }
 
+	void dataSet::slideShow(std::string className, int waitKey , bool normed ){
+		if (normed){
+			if (className == std::string("none")){
+
+				for (int i = 0; i < items.size(); i++){
+
+					cv::namedWindow(items[i].className, cv::WINDOW_NORMAL);
+					cv::imshow(items[i].className, items[i].getNormedCVMat());
+					cv::waitKey(waitKey);
+				}
+			}
+			else{
+
+				for (int i = 0; i < classDictonary[className].size(); i++){
+					cv::namedWindow(classDictonary[className][i].className, cv::WINDOW_NORMAL);
+					cv::imshow(classDictonary[className][i].className, classDictonary[className][i].getNormedCVMat());
+					cv::waitKey(waitKey);
+				}
+
+			}
+		}
+		else{
+			if (className == std::string("none")){
+
+				for (int i = 0; i < items.size(); i++){
+
+					cv::namedWindow(items[i].className, cv::WINDOW_AUTOSIZE);
+					cv::imshow(items[i].className, items[i].getCVMat());
+					cv::waitKey(waitKey);
+				}
+			}
+			else{
+
+				for (int i = 0; i < classDictonary[className].size(); i++){
+					cv::namedWindow(classDictonary[className][i].className, cv::WINDOW_AUTOSIZE);
+					cv::imshow(classDictonary[className][i].className, classDictonary[className][i].getCVMat());
+					cv::waitKey(waitKey);
+				}
+
+			}
+
+
+		}
+	}
+	
 }
