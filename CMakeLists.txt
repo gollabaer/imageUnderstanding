@@ -20,6 +20,19 @@ endif(NOT OpenCV_FOUND)
 set(INCLUDES ${INCLUDES} ${OpenCV_INCLUDE_DIR})
 set(LIBS ${LIBS} ${OpenCV_LIBS})
 
+# MPEG7Fex
+
+file(GLOB_RECURSE MPEG_SRCS ThirdParty/MPEG7Fex/*.cpp ThirdParty/MPEG7Fex/*.c)
+
+add_library(MPEG7Fex ${MPEG_SRCS})
+
+set_target_properties(MPEG7Fex PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+
+target_link_libraries(MPEG7Fex ${OpenCV_LIBRARIES})
+
+list(APPEND INCLUDES ThirdParty/MPEG7Fex/)
+list(APPEND LIBS MPEG7Fex)
+
 # End Libraries
 
 # Begin Executable
