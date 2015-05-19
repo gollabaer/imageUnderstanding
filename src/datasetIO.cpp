@@ -79,6 +79,8 @@ namespace datasetIO{
 
 	dataSet getDataSet(const std::vector<std::string> & classNames, const std::string & caltechPath)
 	{
+        dataSet dataset;
+        dataset.classNames = classNames;
 		std::vector<dataItem> data;
 		dirent *directoryItem;
 		std::vector<int> classIndices = std::vector<int>();
@@ -121,7 +123,6 @@ namespace datasetIO{
 			classIndices.push_back(data.size());
 		}
 
-		dataSet dataset;
 		dataset.items = data;
 		dataset.datasetPath = caltechPath;
 		

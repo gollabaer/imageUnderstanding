@@ -29,6 +29,8 @@ namespace datasetIO{
 		std::string datasetPath;
 		std::vector<dataItem> items;
 		std::map<std::string, std::vector<dataItem> > classDictonary;
+        std::vector<std::string> classNames;
+
         std::vector<dataItem> getItemsFromClass(std::string className);
 
         std::vector<cv::Mat> getRandomImagesFromClass(int num, std::string className, unsigned int seed) const;
