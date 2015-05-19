@@ -15,7 +15,6 @@ public:
   ~custHOG();
 
   virtual cv::Mat compute(datasetIO::dataItem item) const;
-  virtual cv::Mat compute(std::vector<datasetIO::dataItem> items) const;
 };
 
 #endif //GLOB_FEAT

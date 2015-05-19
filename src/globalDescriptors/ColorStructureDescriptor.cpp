@@ -31,13 +31,3 @@ cv::Mat ColorStructDesc::compute(datasetIO::dataItem item) const
     return descriptor;
 }
 
-cv::Mat ColorStructDesc::compute(std::vector<datasetIO::dataItem> items) const
-{
-    cv::Mat DescriptorCollection;
-    for(int i = 0; i < items.size(); ++i)
-    {
-        cv::Mat descriptor = this->compute(items[i]);
-        DescriptorCollection.push_back(descriptor);
-    }
-    return DescriptorCollection;
-}

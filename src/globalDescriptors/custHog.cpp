@@ -56,14 +56,4 @@ cv::Mat custHOG::compute(datasetIO::dataItem item) const
     return cv::Mat(descriptors,true).t();
 }
 
-cv::Mat custHOG::compute(std::vector<datasetIO::dataItem> items) const
-{
-    cv::Mat comb_res;
-    for(int i = 0; i < items.size(); ++i)
-    {
-        comb_res.push_back(compute(items[i]));
-    }
-
-    return comb_res;
-}
 

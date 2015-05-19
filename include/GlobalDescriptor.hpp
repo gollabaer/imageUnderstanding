@@ -9,7 +9,7 @@ public:
     // compute a descriptor for one item
     virtual cv::Mat compute(datasetIO::dataItem item) const = 0;
     // compute a descriptor for each item in items
-    virtual cv::Mat compute(std::vector<datasetIO::dataItem> items) const = 0;
+    virtual cv::Mat compute(std::vector<datasetIO::dataItem> items) const;
     virtual ~GlobalDescriptor(){}
 
     // get a descriptor of num random images in the class specified by classname from the dataset

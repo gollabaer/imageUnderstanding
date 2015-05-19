@@ -1,5 +1,16 @@
 #include <GlobalDescriptor.hpp>
 
+cv::Mat GlobalDescriptor::compute(std::vector<datasetIO::dataItem> items) const
+{
+    cv::Mat comb_res;
+    for(int i = 0; i < items.size(); ++i)
+    {
+        comb_res.push_back(compute(items[i]));
+    }
+
+    return comb_res;
+}
+
 cv::Mat GlobalDescriptor::getRandomImageInClassDescriptors(const std::string classname,
                                          const unsigned int seed, const int num, datasetIO::dataSet dataset)
 {
