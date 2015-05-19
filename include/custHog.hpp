@@ -4,14 +4,18 @@
 #include <opencv2/objdetect/objdetect.hpp>
 #include <datasetIO.hpp>
 
-class custHOG{
+#include <GlobalDescriptor.hpp>
+
+class custHOG : public GlobalDescriptor
+{
   cv::HOGDescriptor hog;
 
 public:
   custHOG();
+  ~custHOG();
 
-  cv::Mat computeHOG(datasetIO::dataItem item);
-  cv::Mat computeHOGs(std::vector<datasetIO::dataItem> items);
+  virtual cv::Mat compute(datasetIO::dataItem item) const;
+  virtual cv::Mat compute(std::vector<datasetIO::dataItem> items) const;
 };
 
 cv::Mat getRandomHogs(const std::string classname, const unsigned int seed, const int num, datasetIO::dataSet dataset);
