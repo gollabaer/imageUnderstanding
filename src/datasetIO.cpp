@@ -137,6 +137,19 @@ namespace datasetIO{
 
     }
 
+    std::vector<dataItem> dataSet::getItemsFromClass(std::string className)
+    {
+        if(classDictonary.find(className) != classDictonary.end())
+        {
+            return classDictonary.at(className);
+        }
+        else
+        {
+            std::cout << "[getItemsFromClass] No Class named: " << className;
+            return std::vector<dataItem>();
+        }
+    }
+
     std::vector<cv::Mat> dataSet::getRandomImagesFromClass(int num, std::string className, unsigned int seed) const
     {
         std::vector<cv::Mat> randomImages;
