@@ -42,6 +42,8 @@ void GlobalDescriptor::compareDescriptorsOfTwoRandomClasses(datasetIO::dataSet d
     std::string class2 = dataset.classNames[rand() % dataset.classNames.size()];
 
     compareDescriptorsOfTwoClasses(numSamples, class1, class2, dataset, rand());
+    compareDescriptorsOfOneClass(dataset, class1,rand());
+    compareDescriptorsOfOneClass(dataset, class2,rand());
 }
 
 
