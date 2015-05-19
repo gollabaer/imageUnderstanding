@@ -187,7 +187,7 @@ namespace datasetIO{
                     // "random"
                     randomItems.push_back(classItems[0]);
                 }
-                std::cout << "[getRandomItemsFromClass] you wanted more items than the class has";
+                std::cout << "[getRandomItemsFromClass] you wanted more items than the class " << className << " has." << std::endl;
                 return randomItems;
             }
 
