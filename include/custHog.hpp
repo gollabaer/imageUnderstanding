@@ -11,6 +11,7 @@ public:
   custHOG();
 
   cv::Mat computeHOG(datasetIO::dataItem item);
+  cv::Mat computeHOGs(std::vector<datasetIO::dataItem> items);
 };
 
 cv::Mat getRandomHogs(const std::string classname, const unsigned int seed, const int num, datasetIO::dataSet dataset);
@@ -19,7 +20,7 @@ void compareHogsOfTwoClasses(const int num, const std::string classname1, const 
 
 void compareHogsOfTwoRandomClasses(datasetIO::dataSet dataset, const int numSamples);
 
-void compareHogsOfOneClass(datasetIO::dataSet,std::string className);
+void compareHogsOfOneClass(datasetIO::dataSet dataset, std::string className, unsigned int seed);
 
 
 #endif //GLOB_FEAT
