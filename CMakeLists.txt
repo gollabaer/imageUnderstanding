@@ -6,7 +6,7 @@ project(image_understanding)
 set(INCLUDES include/)
 
 # Begin Sources
-file(GLOB SRCS src/*.cpp include/*.hpp)
+file(GLOB_RECURSE SRCS src/*.cpp include/*.hpp)
 # End Sources
 
 # Begin Libraries
