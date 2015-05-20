@@ -39,6 +39,8 @@ namespace datasetIO{
 		void slideShow(std::string className = std::string("none"), int waitKey = 200, bool normed = true);
         void getRandomPartionOfClass(const std::string className, std::vector<datasetIO::dataItem> &classItemCopy, std::vector<datasetIO::dataItem> &classItemCopy2, const int size, const unsigned int seed);
 
+        std::vector<std::string> getRandomClasses(const int num,const unsigned int seed, const std::vector<std::string> excludes = std::vector<std::string>());
+
     };
 
 	std::string getCaltechPath();

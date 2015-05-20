@@ -281,5 +281,33 @@ namespace datasetIO{
 
         return;
     }
-	
+
+    std::vector<std::string> dataSet::getRandomClasses(const int num, const unsigned int seed, const std::vector<std::string> excludes)
+    {
+        std::vector<std::string> randomClasses;
+        std::srand(seed);
+
+        const int correct_num = std::min(num,int(classNames.size() - excludes.size()));
+
+        std::vector<int> randNumMemory;
+        for(int i = 0; i < correct_num;)
+        {
+            int randNum = std::rand() % classNames.size();
+            const std::string randClass = classNames[randNum];
+
+            if(std::find(randNumMemory.begin(),randNumMemory.end(),randNum) == randNumMemory.end())
+            {
+                if(std::find(excludes.begin(),excludes.end(),randClass) == excludes.end())
+                {
+                    randNumMemory.push_back(randNum);
+                    ++i;
+
+                    randomClasses.push_back(randClass);
+                }
+            }
+        }
+
+        return randomClasses;
+    }
+
 }
