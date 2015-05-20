@@ -93,3 +93,62 @@ void GlobalDescriptor::compareDescriptorsOfOneClass(datasetIO::dataSet dataset, 
     std::cout << "Wrong class." << std::endl;
 }
 
+void GlobalDescriptor::compareKNN(datasetIO::dataSet dataset, const std::string className, const int testSampleSize, const int k, const int numAdditionalClasses, const int samplesPerClass,unsigned int seed)
+{
+    srand(seed);
+
+    cv::FlannBasedMatcher flann;
+
+    std::vector<std::string> currentClassDict;
+
+    currentClassDict.push_back(className);
+
+    std::vector<std::string> exc; exc.push_back(className);
+
+    std::vector<std::string> randClasses = dataset.getRandomClasses(numAdditionalClasses,rand(),exc);
+
+    for(int i = 0; i < randClasses.size(); ++i)
+    {
+        currentClassDict.push_back(randClasses[i]);
+    }
+
+    std::vector<cv::Mat> descriptors;
+
+    std::vector<datasetIO::dataItem> testSamples = dataset.getRandomItemsFromClass(testSampleSize,className,rand());
+    std::vector<datasetIO::dataItem> samplesFromSameClass = dataset.getRandomItemsFromClass(samplesPerClass,className,rand());
+
+    descriptors.push_back(this->compute(samplesFromSameClass));
+
+    for(int i = 1; i < currentClassDict.size(); ++i)
+    {
+        const std::string currentClassName = currentClassDict[i];
+        const std::vector<datasetIO::dataItem> itemsFromClass = dataset.getRandomItemsFromClass(samplesPerClass,currentClassName,rand());
+
+        const cv::Mat DescriptorsOfClass = this->compute(itemsFromClass);
+
+        descriptors.push_back(DescriptorsOfClass);
+    }
+    flann.add(descriptors);
+    flann.train();
+
+    const cv::Mat queryDescs = this->compute(testSamples);
+
+    std::vector<std::vector<cv::DMatch> > matches;
+    flann.knnMatch(queryDescs,matches,k);
+
+    std::cout << "KNN Test BEGIN" << std::endl;
+    for(int i = 0; i < matches.size(); ++i)
+    {
+        const std::vector<cv::DMatch> currentKNNMatch = matches[i];
+        std::cout << "Image " << testSamples[currentKNNMatch[0].queryIdx].index << " of " << className << ". Votes:" << std::endl;
+        for(int j = 0; j < currentKNNMatch.size(); ++j)
+        {
+            const cv::DMatch currentMatch = currentKNNMatch[j];
+            std::cout << currentClassDict[currentMatch.imgIdx] << " --- distance: " << currentMatch.distance << std::endl;
+        }
+        std::cout << std::endl;
+    }
+
+    std::cout << "KNN Test END" << std::endl;
+}
+

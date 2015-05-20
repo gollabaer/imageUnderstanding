@@ -20,6 +20,8 @@ public:
     void compareDescriptorsOfTwoRandomClasses(datasetIO::dataSet dataset, const int numSamples);
 
     void compareDescriptorsOfOneClass(datasetIO::dataSet dataset, std::string className, unsigned int seed);
+
+    void compareKNN(datasetIO::dataSet dataset, const std::string className, const int testSampleSize, const int k, const int numAdditionalClasses, const int samplesPerClass,unsigned int seed);
 };
 
 
