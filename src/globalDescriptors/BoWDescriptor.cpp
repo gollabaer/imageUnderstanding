@@ -8,9 +8,40 @@ BoWDescriptor::BoWDescriptor(const cv::Ptr<cv::DescriptorExtractor>& dextractor,
       m_featureExtractor(dextractor),
       m_featureMatcher(dmatcher),
       m_trained(false),
-      m_featureDetector(cv::FeatureDetector::create("SURF"))
+      m_featureDetector(cv::FeatureDetector::create("SIFT"))
 {
 
+}
+
+void BoWDescriptor::writeVocabularyToDisk(std::string filepath) const
+{
+    if(!m_trained)
+    {
+        std::cerr << "BoW error: no vocabulary to write" << std::endl;
+        return;
+    }
+    cv::FileStorage fs(filepath, cv::FileStorage::WRITE);
+    fs << "vocabulary" << m_vocabulary;
+    fs.release();
+}
+
+bool BoWDescriptor::readVocabularyFromDisk(std::string filepath)
+{
+    cv::FileStorage fs;
+    if(!fs.open(filepath, cv::FileStorage::READ))
+    {
+        std::cerr << "BoW error: can not find " << filepath << std::endl;
+        return false;
+    }
+    fs["vocabulary"] >> m_vocabulary;
+    fs.release();
+    m_bowExtractor.setVocabulary(m_vocabulary);
+    m_trained = true;
+}
+
+bool BoWDescriptor::isTrained() const
+{
+    return m_trained;
 }
 
 BoWDescriptor::~BoWDescriptor()
@@ -33,10 +64,28 @@ cv::Mat BoWDescriptor::compute(datasetIO::dataItem item) const
     return imageDescriptor;
 }
 
-void BoWDescriptor::train(const std::vector<cv::Mat>& trainImages)
+void BoWDescriptor::visualizeKeypoints(const std::vector<cv::Mat> &images, const std::vector<std::vector<cv::KeyPoint> > &keypoints_vec, size_t wait) const
+{
+    for(size_t i = 0; i < images.size(); ++i)
+    {
+        cv::Mat debugImg = images[i].clone();
+        cv::drawKeypoints(debugImg, keypoints_vec[i], debugImg, cv::Scalar::all(-1), cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
+        cv::namedWindow("keypoints", cv::WINDOW_NORMAL);
+        cv::imshow("keypoints", debugImg);
+        cv::waitKey(wait);
+    }
+}
+
+void BoWDescriptor::train(const std::vector<cv::Mat>& trainImages, bool debugVis)
 {
     std::vector<std::vector<cv::KeyPoint> > keypoints_vec;
     m_featureDetector->detect(trainImages,keypoints_vec);
+
+    if(debugVis)
+    {
+        visualizeKeypoints(trainImages, keypoints_vec);
+    }
+
     std::vector<cv::Mat> descriptors_vec;
     m_featureExtractor->compute(trainImages, keypoints_vec, descriptors_vec);
 
@@ -51,8 +100,9 @@ void BoWDescriptor::train(const std::vector<cv::Mat>& trainImages)
             std::cerr << "bad descriptor type" << std::endl;
         }
     }
-    cv::Mat vocabulary = m_bowTrainer.cluster();
-    m_bowExtractor.setVocabulary(vocabulary);
+    m_vocabulary = m_bowTrainer.cluster();
+    m_bowExtractor.setVocabulary(m_vocabulary);
 
     m_trained = true;
+    writeVocabularyToDisk("../etc/vocabulary.xml");
 }
