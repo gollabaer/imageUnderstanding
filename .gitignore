@@ -32,6 +32,8 @@
 
 # anything in build
 build/*
-ThirdParty/*
+
+# ThirdParty
+ThirdParty/MPEG7Fex/*
 
 .directory
