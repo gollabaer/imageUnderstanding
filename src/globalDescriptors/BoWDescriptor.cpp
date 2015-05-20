@@ -8,7 +8,7 @@ BoWDescriptor::BoWDescriptor(const cv::Ptr<cv::DescriptorExtractor>& dextractor,
       m_featureExtractor(dextractor),
       m_featureMatcher(dmatcher),
       m_trained(false),
-      m_featureDetector(cv::FeatureDetector::create("SIFT"))
+      m_featureDetector(cv::FeatureDetector::create("ORB"))
 {
 
 }
@@ -58,8 +58,8 @@ cv::Mat BoWDescriptor::compute(datasetIO::dataItem item) const
     cv::Mat imageDescriptor;
     std::vector<cv::KeyPoint> keypoints;
     cv::Mat image = item.getCVMat();
-    m_featureDetector->detect(image,keypoints);
-    m_bowExtractor.compute(image,keypoints,imageDescriptor);
+    m_featureDetector->detect(image, keypoints);
+    m_bowExtractor.compute(image, keypoints, imageDescriptor);
 
     return imageDescriptor;
 }
@@ -91,9 +91,11 @@ void BoWDescriptor::train(const std::vector<cv::Mat>& trainImages, bool debugVis
 
     for(size_t i = 0; i < descriptors_vec.size(); ++i)
     {
-        if(descriptors_vec[i].type() == CV_32F)
+        cv::Mat tmp;
+        descriptors_vec[i].convertTo(tmp, CV_32F);
+        if(tmp.type() == CV_32F)
         {
-            m_bowTrainer.add(descriptors_vec[i]);
+            m_bowTrainer.add(tmp);
         }
         else
         {
