@@ -63,7 +63,6 @@ namespace datasetIO{
 
 				if (!(tmp == ".") && !(tmp == ".."))
 				{
-                    std::cout << "Add Class: " << tmp << std::endl;
 					classNames.push_back(tmp);
 				}
 			}
