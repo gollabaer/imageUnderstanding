@@ -93,7 +93,8 @@ void GlobalDescriptor::compareDescriptorsOfOneClass(datasetIO::dataSet dataset, 
     std::cout << "Wrong class." << std::endl;
 }
 
-void GlobalDescriptor::compareKNN(datasetIO::dataSet dataset, const std::string className, const int testSampleSize, const int k, const int numAdditionalClasses, const int samplesPerClass,unsigned int seed)
+void GlobalDescriptor::compareKNN(datasetIO::dataSet dataset, const std::string className, const int testSampleSize, const int k,
+                                  const int numAdditionalClasses, const int samplesPerClass,unsigned int seed)
 {
     srand(seed);
 
@@ -118,7 +119,6 @@ void GlobalDescriptor::compareKNN(datasetIO::dataSet dataset, const std::string 
     std::vector<datasetIO::dataItem> samplesFromSameClass = dataset.getRandomItemsFromClass(samplesPerClass,className,rand());
 
     descriptors.push_back(this->compute(samplesFromSameClass));
-
     for(int i = 1; i < currentClassDict.size(); ++i)
     {
         const std::string currentClassName = currentClassDict[i];
@@ -132,11 +132,17 @@ void GlobalDescriptor::compareKNN(datasetIO::dataSet dataset, const std::string 
     flann.train();
 
     const cv::Mat queryDescs = this->compute(testSamples);
-
     std::vector<std::vector<cv::DMatch> > matches;
     flann.knnMatch(queryDescs,matches,k);
 
     std::cout << "KNN Test BEGIN" << std::endl;
+    std::cout << "used classes" << std::endl;
+    for(size_t i = 0; i < randClasses.size(); ++i)
+    {
+       std::cout << randClasses[i] << std::endl;
+    }
+    std::cout << std::endl;
+
     for(int i = 0; i < matches.size(); ++i)
     {
         const std::vector<cv::DMatch> currentKNNMatch = matches[i];
