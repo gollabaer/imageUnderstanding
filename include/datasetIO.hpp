@@ -37,6 +37,8 @@ namespace datasetIO{
         std::vector<cv::Mat> getRandomNormedImagesFromClass(int num, std::string className, unsigned int seed, int size = 150) const;
         std::vector<dataItem> getRandomItemsFromClass(int num, std::string className, unsigned int seed) const;
 		void slideShow(std::string className = std::string("none"), int waitKey = 200, bool normed = true);
+        void getRandomPartionOfClass(const std::string className, std::vector<datasetIO::dataItem> &classItemCopy, std::vector<datasetIO::dataItem> &classItemCopy2, const int size, const unsigned int seed);
+
     };
 
 	std::string getCaltechPath();

@@ -57,33 +57,19 @@ void GlobalDescriptor::compareDescriptorsOfTwoRandomClasses(datasetIO::dataSet d
     compareDescriptorsOfTwoClasses(numSamples, class1, class2, dataset, rand());
 }
 
-
 void GlobalDescriptor::compareDescriptorsOfOneClass(datasetIO::dataSet dataset, std::string className, unsigned int seed)
 {
-    std::vector<datasetIO::dataItem> randomItems;
+
+
     if(dataset.classDictonary.find(className) != dataset.classDictonary.end())
     {
         const std::vector<datasetIO::dataItem> classItems = dataset.classDictonary.at(className);
         std::vector<datasetIO::dataItem> classItemCopy = classItems;
-
-        std::srand(seed);
-
         std::vector<datasetIO::dataItem> classItemCopy2;
-        classItemCopy2.reserve(classItems.size());
 
-        std::vector<int> randNumMemory;
-        for(int i = 0; i < classItems.size()/2;)
-        {
-            int randNum = std::rand() % classItemCopy.size();
-            if(std::find(randNumMemory.begin(),randNumMemory.end(),randNum) == randNumMemory.end())
-            {
-                randNumMemory.push_back(randNum);
-                ++i;
+        const int size = classItems.size()/2;
 
-                classItemCopy2.push_back(classItemCopy[randNum]);
-                classItemCopy.erase(classItemCopy.begin() + randNum);
-            }
-        }
+        dataset.getRandomPartionOfClass(className,classItemCopy,classItemCopy2, size,seed);
 
         cv::Mat descriptors1 = this->compute(classItemCopy);
 

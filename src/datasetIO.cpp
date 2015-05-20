@@ -257,5 +257,29 @@ namespace datasetIO{
 
 		}
 	}
+
+    void dataSet::getRandomPartionOfClass(const std::string className,std::vector<datasetIO::dataItem> &classItemCopy, std::vector<datasetIO::dataItem> &classItemCopy2, const int size, const unsigned int seed)
+    {
+        std::srand(seed);
+
+        classItemCopy = getItemsFromClass(className);
+        classItemCopy2.reserve(size);
+
+        std::vector<int> randNumMemory;
+        for(int i = 0; i < size;)
+        {
+            int randNum = std::rand() % classItemCopy.size();
+            if(std::find(randNumMemory.begin(),randNumMemory.end(),randNum) == randNumMemory.end())
+            {
+                randNumMemory.push_back(randNum);
+                ++i;
+
+                classItemCopy2.push_back(classItemCopy[randNum]);
+                classItemCopy.erase(classItemCopy.begin() + randNum);
+            }
+        }
+
+        return;
+    }
 	
 }
