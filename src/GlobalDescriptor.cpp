@@ -44,6 +44,8 @@ void GlobalDescriptor::compareDescriptorsOfTwoClasses(const int num, const std::
     }
     avgDist /= float(matches.size());
     std::cout << "Average Distance between " << classname1 << " and " << classname2 << " is " << avgDist << ". Samples " << matches.size() << "." << std::endl;
+    compareDescriptorsOfOneClass(dataset, classname1,rand());
+    compareDescriptorsOfOneClass(dataset, classname2,rand());
 }
 
 void GlobalDescriptor::compareDescriptorsOfTwoRandomClasses(datasetIO::dataSet dataset, const int numSamples)
@@ -53,8 +55,6 @@ void GlobalDescriptor::compareDescriptorsOfTwoRandomClasses(datasetIO::dataSet d
     std::string class2 = dataset.classNames[rand() % dataset.classNames.size()];
 
     compareDescriptorsOfTwoClasses(numSamples, class1, class2, dataset, rand());
-    compareDescriptorsOfOneClass(dataset, class1,rand());
-    compareDescriptorsOfOneClass(dataset, class2,rand());
 }
 
 
