@@ -106,5 +106,5 @@ void BoWDescriptor::train(const std::vector<cv::Mat>& trainImages, bool debugVis
     m_bowExtractor.setVocabulary(m_vocabulary);
 
     m_trained = true;
-    writeVocabularyToDisk("../etc/vocabulary.xml");
+    writeVocabularyToDisk("etc/vocabulary.xml");
 }

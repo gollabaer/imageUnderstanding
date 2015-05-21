@@ -53,7 +53,7 @@ int main ()
 //    bowDescriptor->train(trainingImgs, true);
 
     // read trained vocabulary from disk
-    bowDescriptor->readVocabularyFromDisk("../etc/vocabulary_all_classes_15.xml");
+    bowDescriptor->readVocabularyFromDisk("etc/vocabulary_all_classes_15.xml");
 
     // test BoWDescriptor and Colorstructure Descriptor with knn
     int seed = rand();

@@ -46,3 +46,8 @@ message(STATUS "LIBS: ${LIBS}")
 target_link_libraries(caltechClassifier ${LIBS})
 # End Executable
 
+# Copy etc-files
+
+file(GLOB_RECURSE ETC_FILES etc/*)
+file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/etc/)
+file(COPY ${ETC_FILES} DESTINATION ${CMAKE_BINARY_DIR}/etc/)
