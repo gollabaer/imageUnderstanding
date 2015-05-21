@@ -31,3 +31,23 @@ cv::Mat ColorStructDesc::compute(datasetIO::dataItem item) const
     return descriptor;
 }
 
+std::vector<std::string> ColorStructDesc::getFeatureDescriptions() const
+{
+    std::vector<std::string> featureDescriptions;
+    featureDescriptions.reserve(descSize);
+
+    for(int i = 0; i < descSize; ++i)
+    {
+        std::stringstream stream;
+        stream << "quantCol" << i;
+        featureDescriptions.push_back(stream.str());
+    }
+    return featureDescriptions;
+}
+
+
+
+std::string ColorStructDesc::getName() const
+{
+    return "ColorStructure";
+}

@@ -57,3 +57,25 @@ cv::Mat custHOG::compute(datasetIO::dataItem item) const
 }
 
 
+
+
+std::vector<std::string> custHOG::getFeatureDescriptions() const
+{
+    const int descSize = hog.getDescriptorSize();
+    std::vector<std::string> featureDescriptions;
+    featureDescriptions.reserve(descSize);
+
+    for(int i = 0; i < descSize; ++i)
+    {
+        std::stringstream stream;
+        stream << "GradOriBin" << i;
+        featureDescriptions.push_back(stream.str());
+    }
+    return featureDescriptions;
+}
+
+
+std::string custHOG::getName() const
+{
+    return "HOG";
+}

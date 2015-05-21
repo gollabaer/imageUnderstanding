@@ -14,6 +14,11 @@ public:
   ~ColorStructDesc();
 
   virtual cv::Mat compute(datasetIO::dataItem item) const;
+
+  std::vector<std::string> getFeatureDescriptions() const;
+
+  std::string getName() const;
+
 private:
   int descSize;
 

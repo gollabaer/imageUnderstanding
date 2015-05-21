@@ -31,6 +31,9 @@ public:
     // compute the Histogram of trained visual Words for a query image
     virtual cv::Mat compute(datasetIO::dataItem item) const;
 
+
+    std::string getName() const;
+
     // train the vocabulary of visual words
     void train(const std::vector<cv::Mat>& trainImages, bool debugVis = false);
     bool readVocabularyFromDisk(std::string filepath);

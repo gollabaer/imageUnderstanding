@@ -16,6 +16,10 @@ public:
   ~custHOG();
 
   virtual cv::Mat compute(datasetIO::dataItem item) const;
+
+  std::vector<std::string> getFeatureDescriptions() const;
+
+  std::string getName() const;
 };
 
 #endif //GLOB_FEAT

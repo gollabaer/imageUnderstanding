@@ -1,5 +1,8 @@
 #include <GlobalDescriptor.hpp>
 
+#include <iostream>
+#include <fstream>
+
 cv::Mat GlobalDescriptor::compute(std::vector<datasetIO::dataItem> items) const
 {
     cv::Mat comb_res;
@@ -156,5 +159,63 @@ void GlobalDescriptor::compareKNN(datasetIO::dataSet dataset, const std::string 
     }
 
     std::cout << "KNN Test END" << std::endl;
+}
+
+void GlobalDescriptor::exportDataSetForWEKA(const datasetIO::dataSet dataset)
+{
+    std::string atRelation = "@RELATION caltech101";
+    std::string atAttribute = "@ATTRIBUTE";
+    std::string atData = "@DATA";
+    std::string datatypeNumeric = "NUMERIC";
+    std::string tab = "\t";
+    std::vector<std::string> featureDescriptions = this->getFeatureDescriptions();
+
+    std::ofstream outfile;
+    outfile.open((std::string("etc/") + this->getName() + "_WEKA.arff").c_str());
+    outfile << atRelation << std::endl;
+    outfile << std::endl;
+
+    for(int i = 0; i<featureDescriptions.size();++i)
+    {
+        outfile << atAttribute << tab << featureDescriptions[i] << tab << datatypeNumeric << std::endl;
+    }
+
+    outfile << atAttribute << tab << "class" << tab << "{";
+
+    for(int i = 0; i < dataset.classNames.size(); ++i)
+    {
+        outfile << dataset.classNames[i];
+        if(i < dataset.classNames.size() - 1)
+            outfile << ",";
+    }
+
+    outfile << "}" << std::endl;
+
+    outfile << std::endl;
+    outfile << atData << std::endl;
+
+    for(int i = 0; i < dataset.items.size(); ++i)
+    {
+        std::cout << "item: " << i << " of " << dataset.items.size() << std::endl;
+        const datasetIO::dataItem item = dataset.items[i];
+        const cv::Mat desc = this->compute(item);
+
+        for(int j = 0; j < desc.cols; ++j)
+        {
+            switch(desc.type())
+            {
+            case CV_8U: outfile << desc.at<uchar>(0,j);break;
+            case CV_8S: outfile << desc.at<char>(0,j);break;
+            case CV_16U:outfile << desc.at<ushort>(0,j);break;
+            case CV_16S:outfile << desc.at<short>(0,j);break;
+            case CV_32S:outfile << desc.at<int>(0,j);break;
+            case CV_32F:outfile << desc.at<float>(0,j);break;
+            case CV_64F:outfile << desc.at<double>(0,j);break;
+            default: std::cout << "[exportToWeka] what?" << std::endl;break;
+            }
+            outfile << ",";
+        }
+        outfile << item.className << std::endl;
+    }
 }
 

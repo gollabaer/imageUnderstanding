@@ -108,3 +108,9 @@ void BoWDescriptor::train(const std::vector<cv::Mat>& trainImages, bool debugVis
     m_trained = true;
     writeVocabularyToDisk("etc/vocabulary.xml");
 }
+
+
+std::string BoWDescriptor::getName() const
+{
+    return "BOW";
+}
