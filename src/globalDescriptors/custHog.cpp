@@ -3,10 +3,10 @@
 
 custHOG::custHOG()
 {
-
+    imageSize = 128;
     // has to be <= than the image size !!!!!
     // Detection window size. Align to block size and block stride.
-    cv::Size win_size(128, 128);
+    cv::Size win_size(imageSize, imageSize);
 
     // Block size in pixels.
     cv::Size block_size(32, 32);
@@ -52,7 +52,7 @@ custHOG::~custHOG()
 cv::Mat custHOG::compute(datasetIO::dataItem item) const
 {
     std::vector<float> descriptors;
-    hog.compute(item.getNormedCVMat(128),descriptors);
+    hog.compute(item.getNormedCVMat(imageSize),descriptors);
     return cv::Mat(descriptors,true).t();
 }
 

@@ -2,7 +2,7 @@
 
 ColorStructDesc::ColorStructDesc()
 {
-
+    descSize = 64;
 }
 
 
@@ -15,7 +15,7 @@ cv::Mat ColorStructDesc::compute(datasetIO::dataItem item) const
 {
     cv::Mat mat = item.getNormedCVMat();
     Frame image(mat);
-    XM::ColorStructureDescriptor *csd = Feature::getColorStructureD(&image);
+    XM::ColorStructureDescriptor *csd = Feature::getColorStructureD(&image,descSize);
 
     const int DescriptorLength = csd->GetSize();
 

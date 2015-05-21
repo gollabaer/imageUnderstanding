@@ -14,6 +14,9 @@ public:
   ~ColorStructDesc();
 
   virtual cv::Mat compute(datasetIO::dataItem item) const;
+private:
+  int descSize;
+
 };
 
 #endif //DOM_COLOR

@@ -9,6 +9,7 @@
 class custHOG : public GlobalDescriptor
 {
   cv::HOGDescriptor hog;
+  int imageSize;
 
 public:
   custHOG();
