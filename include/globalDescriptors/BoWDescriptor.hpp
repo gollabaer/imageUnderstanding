@@ -8,6 +8,11 @@ class BoWDescriptor : public GlobalDescriptor
 {
 private:
     BoWDescriptor();
+
+    size_t m_vocabSize;
+    cv::Mat m_vocabulary;
+    bool m_trained;
+
     cv::BOWKMeansTrainer m_bowTrainer;
     // needs to be mutable since its compute() method is not const
     mutable cv::BOWImgDescriptorExtractor m_bowExtractor;
@@ -15,13 +20,10 @@ private:
     cv::Ptr<cv::FeatureDetector> m_featureDetector;
     cv::Ptr<cv::DescriptorExtractor> m_featureExtractor;
     cv::Ptr<cv::DescriptorMatcher> m_featureMatcher;
-    cv::Mat m_vocabulary;
 
     // writes trained vocabulary using cv::Filestorage
     void writeVocabularyToDisk(std::string filepath) const;
     void visualizeKeypoints(const std::vector<cv::Mat>& images, const std::vector<std::vector<cv::KeyPoint> > &keypoints_vec, size_t wait = 0) const;
-
-    bool m_trained;
 
 public:
     BoWDescriptor(const cv::Ptr<cv::DescriptorExtractor> &dextractor, const cv::Ptr<cv::DescriptorMatcher> &dmatcher,
@@ -30,7 +32,7 @@ public:
 
     // compute the Histogram of trained visual Words for a query image
     virtual cv::Mat compute(datasetIO::dataItem item) const;
-
+    std::vector<std::string> getFeatureDescriptions() const;
 
     std::string getName() const;
 

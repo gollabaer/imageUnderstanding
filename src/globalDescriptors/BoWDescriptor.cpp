@@ -3,7 +3,8 @@
 BoWDescriptor::BoWDescriptor(const cv::Ptr<cv::DescriptorExtractor>& dextractor, const cv::Ptr<cv::DescriptorMatcher>& dmatcher,
                              int clusterCount, const cv::TermCriteria& termcrit, int attempts, int flags)
     :
-      m_bowTrainer(cv::BOWKMeansTrainer(clusterCount, termcrit, attempts, flags)),
+      m_vocabSize(clusterCount),
+      m_bowTrainer(cv::BOWKMeansTrainer(m_vocabSize, termcrit, attempts, flags)),
       m_bowExtractor(dextractor, dmatcher),
       m_featureExtractor(dextractor),
       m_featureMatcher(dmatcher),
@@ -62,6 +63,21 @@ cv::Mat BoWDescriptor::compute(datasetIO::dataItem item) const
     m_bowExtractor.compute(image, keypoints, imageDescriptor);
 
     return imageDescriptor;
+}
+
+std::vector<std::string> BoWDescriptor::getFeatureDescriptions() const
+{
+    const int descSize = m_vocabSize;
+    std::vector<std::string> featureDescriptions;
+    featureDescriptions.reserve(descSize);
+
+    for(int i = 0; i < descSize; ++i)
+    {
+        std::stringstream stream;
+        stream << "word" << i;
+        featureDescriptions.push_back(stream.str());
+    }
+    return featureDescriptions;
 }
 
 void BoWDescriptor::visualizeKeypoints(const std::vector<cv::Mat> &images, const std::vector<std::vector<cv::KeyPoint> > &keypoints_vec, size_t wait) const
