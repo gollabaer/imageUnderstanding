@@ -31,13 +31,13 @@ namespace datasetIO{
 		std::map<std::string, std::vector<dataItem> > classDictonary;
         std::vector<std::string> classNames;
 
-        std::vector<dataItem> getItemsFromClass(std::string className);
+        std::vector<dataItem> getItemsFromClass(std::string className) const;
 
         std::vector<cv::Mat> getRandomImagesFromClass(int num, std::string className, unsigned int seed) const;
         std::vector<cv::Mat> getRandomNormedImagesFromClass(int num, std::string className, unsigned int seed, int size = 150) const;
         std::vector<dataItem> getRandomItemsFromClass(int num, std::string className, unsigned int seed) const;
 		void slideShow(std::string className = std::string("none"), int waitKey = 200, bool normed = true);
-        void getRandomPartionOfClass(const std::string className, std::vector<datasetIO::dataItem> &classItemCopy, std::vector<datasetIO::dataItem> &classItemCopy2, const int size, const unsigned int seed);
+        void getRandomPartionOfClass(const std::string className, std::vector<datasetIO::dataItem> &classItemCopy, std::vector<datasetIO::dataItem> &classItemCopy2, const int size, const unsigned int seed) const;
 
         std::vector<std::string> getRandomClasses(const int num,const unsigned int seed, const std::vector<std::string> excludes = std::vector<std::string>());
 

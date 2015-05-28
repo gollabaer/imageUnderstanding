@@ -137,7 +137,7 @@ namespace datasetIO{
 
     }
 
-    std::vector<dataItem> dataSet::getItemsFromClass(std::string className)
+    std::vector<dataItem> dataSet::getItemsFromClass(std::string className) const
     {
         if(classDictonary.find(className) != classDictonary.end())
         {
@@ -257,7 +257,7 @@ namespace datasetIO{
 		}
 	}
 
-    void dataSet::getRandomPartionOfClass(const std::string className,std::vector<datasetIO::dataItem> &classItemCopy, std::vector<datasetIO::dataItem> &classItemCopy2, const int size, const unsigned int seed)
+    void dataSet::getRandomPartionOfClass(const std::string className,std::vector<datasetIO::dataItem> &classItemCopy, std::vector<datasetIO::dataItem> &classItemCopy2, const int size, const unsigned int seed) const
     {
         std::srand(seed);
 
