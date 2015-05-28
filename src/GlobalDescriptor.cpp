@@ -161,7 +161,7 @@ void GlobalDescriptor::compareKNN(datasetIO::dataSet dataset, const std::string 
     std::cout << "KNN Test END" << std::endl;
 }
 
-void GlobalDescriptor::exportDataSetForWEKA(const datasetIO::dataSet dataset)
+void GlobalDescriptor::exportSelectedItemsForWEKA(std::vector<datasetIO::dataItem> items_to_export, std::vector<std::string> classNames_to_export, std::string filename)
 {
     std::string atRelation = "@RELATION caltech101";
     std::string atAttribute = "@ATTRIBUTE";
@@ -171,7 +171,7 @@ void GlobalDescriptor::exportDataSetForWEKA(const datasetIO::dataSet dataset)
     std::vector<std::string> featureDescriptions = this->getFeatureDescriptions();
 
     std::ofstream outfile;
-    outfile.open((std::string("etc/") + this->getName() + "_WEKA.arff").c_str());
+    outfile.open(filename.c_str());
     outfile << atRelation << std::endl;
     outfile << std::endl;
 
@@ -182,10 +182,10 @@ void GlobalDescriptor::exportDataSetForWEKA(const datasetIO::dataSet dataset)
 
     outfile << atAttribute << tab << "class" << tab << "{";
 
-    for(int i = 0; i < dataset.classNames.size(); ++i)
+    for(int i = 0; i < classNames_to_export.size(); ++i)
     {
-        outfile << dataset.classNames[i];
-        if(i < dataset.classNames.size() - 1)
+        outfile << classNames_to_export[i];
+        if(i < classNames_to_export.size() - 1)
             outfile << ",";
     }
 
@@ -194,10 +194,10 @@ void GlobalDescriptor::exportDataSetForWEKA(const datasetIO::dataSet dataset)
     outfile << std::endl;
     outfile << atData << std::endl;
 
-    for(int i = 0; i < dataset.items.size(); ++i)
+    for(int i = 0; i < items_to_export.size(); ++i)
     {
-        std::cout << "item: " << i << " of " << dataset.items.size() << std::endl;
-        const datasetIO::dataItem item = dataset.items[i];
+        std::cout << "item: " << i << " of " << items_to_export.size() << std::endl;
+        const datasetIO::dataItem item = items_to_export[i];
         const cv::Mat desc = this->compute(item);
 
         for(int j = 0; j < desc.cols; ++j)
@@ -217,5 +217,44 @@ void GlobalDescriptor::exportDataSetForWEKA(const datasetIO::dataSet dataset)
         }
         outfile << item.className << std::endl;
     }
+}
+
+void GlobalDescriptor::exportDataSetForWEKA(const datasetIO::dataSet dataset)
+{
+    std::vector<datasetIO::dataItem> items_to_export = dataset.items;
+    std::vector<std::string> classNames_to_export = dataset.classNames;
+    std::string filename = (std::string("etc/") + this->getName() + "_WEKA.arff");
+
+    exportSelectedItemsForWEKA(items_to_export, classNames_to_export, filename);
+}
+
+void GlobalDescriptor::exportTraining_TestDataSetForWEKA(const datasetIO::dataSet dataset, const unsigned int seed)
+{
+    std::vector<datasetIO::dataItem> test_items;
+    std::vector<datasetIO::dataItem> train_items;
+    std::vector<std::string> classNames_to_export = dataset.classNames;
+
+    std::stringstream stream1;
+    stream1 << "etc/" << this->getName() << "_train_seed_" << seed << "_WEKA.arff";
+    std::string filename_training = stream1.str();
+
+    std::stringstream stream2;
+    stream2 << "etc/" << this->getName() << "_test_seed_" << seed << "_WEKA.arff";
+    std::string filename_test = stream2.str();
+
+    for(int i = 0; i < classNames_to_export.size(); ++i)
+    {
+        std::vector<datasetIO::dataItem> part1;
+        std::vector<datasetIO::dataItem> part2;
+        dataset.getRandomPartionOfClass(classNames_to_export[i],part1,part2,18,seed);
+
+        test_items.reserve(test_items.size() + part1.size());
+        test_items.insert(test_items.end(),part1.begin(),part1.end());
+
+        train_items.reserve(train_items.size() + part2.size());
+        train_items.insert(train_items.end(),part2.begin(),part2.end());
+    }
+    exportSelectedItemsForWEKA(train_items,classNames_to_export,filename_training);
+    exportSelectedItemsForWEKA(test_items,classNames_to_export,filename_test);
 }
 

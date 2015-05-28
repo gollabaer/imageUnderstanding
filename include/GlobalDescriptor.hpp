@@ -30,6 +30,10 @@ public:
     void compareKNN(datasetIO::dataSet dataset, const std::string className, const int testSampleSize, const int k, const int numAdditionalClasses, const int samplesPerClass,unsigned int seed);
 
     void exportDataSetForWEKA(const datasetIO::dataSet dataset);
+
+    void exportTraining_TestDataSetForWEKA(const datasetIO::dataSet dataset, const unsigned int seed);
+
+    void exportSelectedItemsForWEKA(std::vector<datasetIO::dataItem> items_to_export, std::vector<std::string> classNames_to_export, std::string filename);
 };
 
 
