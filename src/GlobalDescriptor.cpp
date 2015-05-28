@@ -230,6 +230,7 @@ void GlobalDescriptor::exportDataSetForWEKA(const datasetIO::dataSet dataset)
 
 void GlobalDescriptor::exportTraining_TestDataSetForWEKA(const datasetIO::dataSet dataset, const unsigned int seed)
 {
+    const int itemsPerClassFortraining = 15;
     std::vector<datasetIO::dataItem> test_items;
     std::vector<datasetIO::dataItem> train_items;
     std::vector<std::string> classNames_to_export = dataset.classNames;
@@ -246,7 +247,7 @@ void GlobalDescriptor::exportTraining_TestDataSetForWEKA(const datasetIO::dataSe
     {
         std::vector<datasetIO::dataItem> part1;
         std::vector<datasetIO::dataItem> part2;
-        dataset.getRandomPartionOfClass(classNames_to_export[i],part1,part2,18,seed);
+        dataset.getRandomPartionOfClass(classNames_to_export[i],part1,part2,itemsPerClassFortraining,seed);
 
         test_items.reserve(test_items.size() + part1.size());
         test_items.insert(test_items.end(),part1.begin(),part1.end());
