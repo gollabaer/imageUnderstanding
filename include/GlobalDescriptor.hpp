@@ -31,7 +31,7 @@ public:
 
     void exportDataSetForWEKA(const datasetIO::dataSet dataset);
 
-    void exportTraining_TestDataSetForWEKA(const datasetIO::dataSet dataset, const unsigned int seed);
+    void exportTraining_TestDataSetForWEKA(const datasetIO::dataSet dataset, const unsigned int seed, std::string nameappend = "");
 
     void exportSelectedItemsForWEKA(std::vector<datasetIO::dataItem> items_to_export, std::vector<std::string> classNames_to_export, std::string filename);
 };

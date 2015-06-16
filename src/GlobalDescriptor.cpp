@@ -228,18 +228,18 @@ void GlobalDescriptor::exportDataSetForWEKA(const datasetIO::dataSet dataset)
     exportSelectedItemsForWEKA(items_to_export, classNames_to_export, filename);
 }
 
-void GlobalDescriptor::exportTraining_TestDataSetForWEKA(const datasetIO::dataSet dataset, const unsigned int seed)
+void GlobalDescriptor::exportTraining_TestDataSetForWEKA(const datasetIO::dataSet dataset, const unsigned int seed, std::string nameappend)
 {
     std::vector<datasetIO::dataItem> test_items;
     std::vector<datasetIO::dataItem> train_items;
     std::vector<std::string> classNames_to_export = dataset.classNames;
 
     std::stringstream stream1;
-    stream1 << "etc/" << this->getName() << "_train_seed_" << seed << "_WEKA.arff";
+    stream1 << "etc/" << this->getName() << "_train_seed_" << seed << "_WEKA_" << nameappend << ".arff";
     std::string filename_training = stream1.str();
 
     std::stringstream stream2;
-    stream2 << "etc/" << this->getName() << "_test_seed_" << seed << "_WEKA.arff";
+    stream2 << "etc/" << this->getName() << "_test_seed_" << seed << "_WEKA_" << nameappend << ".arff";
     std::string filename_test = stream2.str();
 
     for(int i = 0; i < classNames_to_export.size(); ++i)
