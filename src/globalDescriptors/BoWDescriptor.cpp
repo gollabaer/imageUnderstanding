@@ -92,7 +92,8 @@ void BoWDescriptor::visualizeKeypoints(const std::vector<cv::Mat> &images, const
     }
 }
 
-void BoWDescriptor::train(const std::vector<cv::Mat>& trainImages, bool debugVis)
+void BoWDescriptor::train(const std::vector<cv::Mat>& trainImages, bool debugVis,
+                          std::string output_path)
 {
     std::vector<std::vector<cv::KeyPoint> > keypoints_vec;
     m_featureDetector->detect(trainImages,keypoints_vec);
@@ -122,7 +123,7 @@ void BoWDescriptor::train(const std::vector<cv::Mat>& trainImages, bool debugVis
     m_bowExtractor.setVocabulary(m_vocabulary);
 
     m_trained = true;
-    writeVocabularyToDisk("etc/vocabulary.xml");
+    writeVocabularyToDisk(output_path);
 }
 
 

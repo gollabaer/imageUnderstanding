@@ -37,7 +37,8 @@ public:
     std::string getName() const;
 
     // train the vocabulary of visual words
-    void train(const std::vector<cv::Mat>& trainImages, bool debugVis = false);
+    void train(const std::vector<cv::Mat>& trainImages, bool debugVis = false,
+               std::string output_path = "etc/vocabulary.xml");
     bool readVocabularyFromDisk(std::string filepath);
     bool isTrained() const;
 };
