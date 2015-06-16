@@ -13,6 +13,8 @@
 
 namespace datasetIO{
 
+    const unsigned int TRAINING_SET_SIZE = 18;
+
 	struct dataItem
 	{
 		std::string filePath;
