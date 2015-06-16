@@ -96,6 +96,7 @@ void BoWDescriptor::train(const std::vector<cv::Mat>& trainImages, bool debugVis
                           std::string output_path)
 {
     std::vector<std::vector<cv::KeyPoint> > keypoints_vec;
+    std::cout << "BoW_Train: start detecting Keypoints" << std::endl;
     m_featureDetector->detect(trainImages,keypoints_vec);
 
     if(debugVis)
@@ -104,13 +105,16 @@ void BoWDescriptor::train(const std::vector<cv::Mat>& trainImages, bool debugVis
     }
 
     std::vector<cv::Mat> descriptors_vec;
+    std::cout << "BoW_Train: start computing descriptors" << std::endl;
     m_featureExtractor->compute(trainImages, keypoints_vec, descriptors_vec);
+    std::cout << "BoW_Train: finished computing descriptors" << std::endl;
+
 
     for(size_t i = 0; i < descriptors_vec.size(); ++i)
     {
         cv::Mat tmp;
         descriptors_vec[i].convertTo(tmp, CV_32F);
-        if(tmp.type() == CV_32F)
+       if(tmp.type() == CV_32F)
         {
             m_bowTrainer.add(tmp);
         }
@@ -119,6 +123,7 @@ void BoWDescriptor::train(const std::vector<cv::Mat>& trainImages, bool debugVis
             std::cerr << "bad descriptor type" << std::endl;
         }
     }
+    std::cout << "BoW_Train: start clustering" << std::endl;
     m_vocabulary = m_bowTrainer.cluster();
     m_bowExtractor.setVocabulary(m_vocabulary);
 
