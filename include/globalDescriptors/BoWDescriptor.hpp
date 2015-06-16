@@ -26,7 +26,7 @@ private:
     void visualizeKeypoints(const std::vector<cv::Mat>& images, const std::vector<std::vector<cv::KeyPoint> > &keypoints_vec, size_t wait = 0) const;
 
 public:
-    BoWDescriptor(const cv::Ptr<cv::DescriptorExtractor> &dextractor, const cv::Ptr<cv::DescriptorMatcher> &dmatcher,
+    BoWDescriptor(const cv::Ptr<cv::FeatureDetector> &detector, const cv::Ptr<cv::DescriptorExtractor> &dextractor, const cv::Ptr<cv::DescriptorMatcher> &dmatcher,
                   int clusterCount, const cv::TermCriteria& termcrit = cv::TermCriteria(), int attempts = 3, int flags = cv::KMEANS_PP_CENTERS );
     virtual ~BoWDescriptor();
 

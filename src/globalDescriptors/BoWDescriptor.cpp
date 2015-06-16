@@ -1,6 +1,6 @@
 #include "globalDescriptors/BoWDescriptor.hpp"
 
-BoWDescriptor::BoWDescriptor(const cv::Ptr<cv::DescriptorExtractor>& dextractor, const cv::Ptr<cv::DescriptorMatcher>& dmatcher,
+BoWDescriptor::BoWDescriptor(const cv::Ptr<cv::FeatureDetector> &detector, const cv::Ptr<cv::DescriptorExtractor>& dextractor, const cv::Ptr<cv::DescriptorMatcher>& dmatcher,
                              int clusterCount, const cv::TermCriteria& termcrit, int attempts, int flags)
     :
       m_vocabSize(clusterCount),
@@ -9,7 +9,7 @@ BoWDescriptor::BoWDescriptor(const cv::Ptr<cv::DescriptorExtractor>& dextractor,
       m_featureExtractor(dextractor),
       m_featureMatcher(dmatcher),
       m_trained(false),
-      m_featureDetector(cv::FeatureDetector::create("ORB"))
+      m_featureDetector(detector)
 {
 
 }
