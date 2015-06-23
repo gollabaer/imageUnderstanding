@@ -32,6 +32,7 @@
 
 # anything in build
 build/*
+build-release/*
 
 # ThirdParty
 ThirdParty/MPEG7Fex/*
