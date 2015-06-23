@@ -219,16 +219,16 @@ void GlobalDescriptor::exportSelectedItemsForWEKA(std::vector<datasetIO::dataIte
     }
 }
 
-void GlobalDescriptor::exportDataSetForWEKA(const datasetIO::dataSet dataset)
+void GlobalDescriptor::exportDataSetForWEKA(const datasetIO::dataSet dataset, std::string output_dir, std::string append)
 {
     std::vector<datasetIO::dataItem> items_to_export = dataset.items;
     std::vector<std::string> classNames_to_export = dataset.classNames;
-    std::string filename = (std::string("etc/") + this->getName() + "_WEKA.arff");
+    std::string filename = (output_dir + this->getName() + "_WEKA" + append + ".arff");
 
     exportSelectedItemsForWEKA(items_to_export, classNames_to_export, filename);
 }
 
-void GlobalDescriptor::exportTraining_TestDataSetForWEKA(const datasetIO::dataSet dataset, const unsigned int seed)
+void GlobalDescriptor::exportTraining_TestDataSetForWEKA(const datasetIO::dataSet dataset, const unsigned int seed, std::string nameappend)
 {
     const int itemsPerClassFortraining = 15;
     std::vector<datasetIO::dataItem> test_items;
@@ -236,18 +236,18 @@ void GlobalDescriptor::exportTraining_TestDataSetForWEKA(const datasetIO::dataSe
     std::vector<std::string> classNames_to_export = dataset.classNames;
 
     std::stringstream stream1;
-    stream1 << "etc/" << this->getName() << "_train_seed_" << seed << "_WEKA.arff";
+    stream1 << "etc/small/" << this->getName() << "_train_seed_" << seed << "_WEKA_" << nameappend << ".arff";
     std::string filename_training = stream1.str();
 
     std::stringstream stream2;
-    stream2 << "etc/" << this->getName() << "_test_seed_" << seed << "_WEKA.arff";
+    stream2 << "etc/small/" << this->getName() << "_test_seed_" << seed << "_WEKA_" << nameappend << ".arff";
     std::string filename_test = stream2.str();
 
     for(int i = 0; i < classNames_to_export.size(); ++i)
     {
         std::vector<datasetIO::dataItem> part1;
         std::vector<datasetIO::dataItem> part2;
-        dataset.getRandomPartionOfClass(classNames_to_export[i],part1,part2,itemsPerClassFortraining,seed);
+        dataset.getRandomPartionOfClass(classNames_to_export[i],part1,part2,datasetIO::TRAINING_SET_SIZE,seed);
 
         test_items.reserve(test_items.size() + part1.size());
         test_items.insert(test_items.end(),part1.begin(),part1.end());

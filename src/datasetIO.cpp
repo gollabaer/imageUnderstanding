@@ -184,7 +184,7 @@ namespace datasetIO{
                 for(int i = 0; i < classItems.size(); ++i)
                 {
                     // "random"
-                    randomItems.push_back(classItems[0]);
+                    randomItems.push_back(classItems[i]);
                 }
                 std::cout << "[getRandomItemsFromClass] you wanted more items than the class " << className << " has." << std::endl;
                 return randomItems;
@@ -277,7 +277,7 @@ namespace datasetIO{
                 classItemCopy.erase(classItemCopy.begin() + randNum);
             }
         }
-
+	classItemCopy.resize(size);
         return;
     }
 
