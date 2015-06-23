@@ -13,7 +13,7 @@
 
 namespace datasetIO{
 
-    const unsigned int TRAINING_SET_SIZE = 18;
+    const unsigned int TRAINING_SET_SIZE = 15;
 
 	struct dataItem
 	{
