@@ -277,6 +277,7 @@ namespace datasetIO{
                 classItemCopy.erase(classItemCopy.begin() + randNum);
             }
         }
+	classItemCopy.resize(size);
         return;
     }
 
