@@ -1,26 +1,25 @@
-#ifndef GLOB_FEAT
-#define GLOB_FEAT
+#ifndef _EHD_
+#define _EHD_
 
-#include <opencv2/objdetect/objdetect.hpp>
+#include <Feature.h>
 #include <datasetIO.hpp>
-
 #include <GlobalDescriptor.hpp>
 
-class custHOG : public GlobalDescriptor
+class EdgeHistogramDesc : public GlobalDescriptor
 {
-protected:
-  cv::HOGDescriptor hog;
-  int imageSize;
 
 public:
-  custHOG();
-  ~custHOG();
+  EdgeHistogramDesc();
+  ~EdgeHistogramDesc();
 
   virtual cv::Mat compute(datasetIO::dataItem item) const;
 
   std::vector<std::string> getFeatureDescriptions() const;
 
   std::string getName() const;
+
+private:
+  int descSize;
 };
 
-#endif //GLOB_FEAT
+#endif //_EHD_
