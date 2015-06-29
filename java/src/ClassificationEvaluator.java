@@ -1,0 +1,250 @@
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeMap;
+
+import weka.core.Instances;
+import weka.core.SelectedTag;
+import weka.classifiers.Classifier;
+import weka.classifiers.Evaluation;
+import weka.classifiers.functions.LibSVM;
+import weka.classifiers.lazy.IBk;
+import weka.classifiers.trees.RandomForest;
+import weka.filters.Filter;
+import weka.filters.supervised.instance.Resample;
+
+public class ClassificationEvaluator {
+
+	public static int calcPercentage(int sampleSize, Instances dataset)
+	{
+		int numClasses = dataset.numClasses();
+		int numInstances = dataset.numInstances();
+		float percentage = 100 * sampleSize * numClasses / (float) numInstances;
+		return (int)Math.ceil(percentage);
+	}
+	
+	/** @brief split dataset into train and test sets using numSamplesPerClass */
+	public static CvDataset getCvDataset(Instances dataset, int numSamplesPerClass) throws Exception
+	{
+		int seed = (int) System.currentTimeMillis();
+		return getCvDataset(dataset, numSamplesPerClass, seed);
+	}
+	
+	
+	/**
+	 * @brief split dataset into train and test sets using numSamplesPerClass 
+	 * @param dataset
+	 * @param numSamplesPerClass
+	 * @param seed
+	 * @return
+	 * @throws Exception
+	 */
+	public static CvDataset getCvDataset(Instances dataset, int numSamplesPerClass, int seed) throws Exception
+	{
+		CvDataset out = new CvDataset();
+		
+		// Sampling params
+		int percentage = calcPercentage(numSamplesPerClass, dataset);
+		String filterOptions = "-Z " + percentage + " -no-replacement -B 1";
+		
+		// create ResampleFilter
+		Resample resamp = new Resample();
+		resamp.setOptions(weka.core.Utils.splitOptions(filterOptions));
+		resamp.setRandomSeed(seed);
+		resamp.setInputFormat(dataset);
+		
+		// use the first resample as training set
+		Instances trainingset = Resample.useFilter(dataset, resamp);
+		out.setTrainingSet(trainingset);
+		
+		System.out.println(trainingset.size());
+		System.out.println("ohne zuruecklegen: " + resamp.getNoReplacement());
+		System.out.println("prozent: " + resamp.getSampleSizePercent());
+		System.out.println(trainingset.attributeStats(trainingset.numAttributes() -1));
+		
+		int numTestSets = 1;
+		
+		Instances remainingDataset = new Instances(dataset);
+		for(int i = 0; i < numTestSets; i++)
+		{
+//			System.out.println("------------\t testset nr: " + (i+1) + "\t-------------");
+			
+			// get the remaining dataset
+			resamp.setInputFormat(dataset);
+			resamp.setInvertSelection(true);
+			remainingDataset = Filter.useFilter(remainingDataset, resamp);
+			
+//			System.out.println("remaining Set Size = " + remainingDataset.size());
+			
+			// resample the remaining dataset for a testset
+			resamp.setInvertSelection(false);
+			percentage = calcPercentage(numSamplesPerClass, remainingDataset);
+			resamp.setSampleSizePercent(percentage);
+			resamp.setInputFormat(remainingDataset);
+			Instances testset = Resample.useFilter(remainingDataset, resamp);
+			out.addTestset(testset);
+			
+//			System.out.println("testset Size: " + testset.numInstances());
+//			System.out.println("percent of remaining set: " + percentage);	
+//			System.out.println(testset.attributeStats(CLASS_IDX));
+		}	
+		return out;
+	}
+	
+	/**
+	 * @param cfier Classifier to evaluate
+	 * @param dataset Dataset to evaluate on
+	 * @param num_iterations Number random subsamples of dataset
+	 * @return the average percentage of correctly classified instanced throughout the iterations 
+	 * @throws Exception
+	 */
+	public static double evaluateClassifier(Classifier cfier, Instances dataset, int num_iterations) throws Exception
+	{
+		if(num_iterations <= 0)
+		{
+			throw new IllegalArgumentException("num_itterations must be greater than zero");
+		}
+		
+		final int SAMPLES_PER_CLASS = 15;
+		double avg_test_correct = 0;
+		double avg_train_correct = 0;
+		
+		for(int iteration = 0; iteration < num_iterations; iteration++)
+		{
+			//split dataset randomly in train and testset
+			CvDataset mySet = getCvDataset(dataset, SAMPLES_PER_CLASS, iteration);
+			
+			//train classifier
+			cfier.buildClassifier(mySet.getTrainingset());
+			
+			// evaluate trained classifier
+			Evaluation eval = new Evaluation(mySet.getTrainingset());
+			eval.evaluateModel(cfier, mySet.getTestset(0));
+			avg_test_correct += eval.correct()/eval.numInstances();
+//			System.out.println(eval.toSummaryString());
+			
+			eval.evaluateModel(cfier, mySet.getTrainingset());
+			avg_train_correct += eval.correct()/eval.numInstances();
+			
+		}
+		avg_test_correct /= num_iterations;
+		avg_train_correct /= num_iterations;
+//		System.out.println("Test Average correctly classified: " + avg_test_correct);
+//		System.out.println("Train Average correctly classified: " + avg_train_correct);
+		
+		return avg_test_correct;
+	}
+	
+	private static Instances readDataset(String filepath)
+			throws FileNotFoundException, IOException {
+		BufferedReader breader = null;
+		breader = new BufferedReader(new FileReader(filepath));
+		
+		Instances dataset = new Instances (breader);
+		final int CLASS_IDX = dataset.numAttributes() -1;
+		dataset.setClassIndex(CLASS_IDX);
+		breader.close();
+		return dataset;
+	}
+
+	private static HashMap<String, Classifier> generateClassifiers() {
+		HashMap<String, Classifier> cfiersToBeUsed = new HashMap<String, Classifier>();
+		final String PARAMETER_SEPERATOR = " ";
+		
+		// SVM
+		HashMap<Integer, String> kernels =  new HashMap<Integer, String>();
+		kernels.put(0, "Linear");
+		kernels.put(1, "polynomial");
+		kernels.put(2, "rbf");
+		kernels.put(3, "sigmoid");
+		LibSVM svm1 = new LibSVM();
+		final double GAMMA = 12;
+		final double COEF0 = 200;
+		final double COST = 2500;
+		int kernelType = 1;
+		svm1.setKernelType(new SelectedTag(kernelType, LibSVM.TAGS_KERNELTYPE));
+		svm1.setGamma(GAMMA);
+		svm1.setCoef0(COEF0);
+		svm1.setCost(COST);
+		String cfierKey = "SVM" + PARAMETER_SEPERATOR + "gamma:" + GAMMA + PARAMETER_SEPERATOR + "Kerneltype:" +
+		kernels.get(svm1.getKernelType()) + PARAMETER_SEPERATOR + "cost:" + COST + PARAMETER_SEPERATOR + "coef0:" + COEF0;
+		cfiersToBeUsed.put(cfierKey, svm1);
+		
+		// Random Forest
+		final int NUM_TREES = 800;
+		RandomForest randForest =  new RandomForest();
+		randForest.setNumTrees(NUM_TREES);
+		cfierKey = "RandomForest" + PARAMETER_SEPERATOR + "NumTrees:" + NUM_TREES;
+		cfiersToBeUsed.put(cfierKey, randForest);
+		
+		// KNN
+		int k = 15;
+		boolean useCrossValidation = true;
+		IBk knn = new IBk();
+		knn.setCrossValidate(useCrossValidation);
+		knn.setKNN(k);
+		cfierKey = "knn" + PARAMETER_SEPERATOR + "k:" + k + PARAMETER_SEPERATOR + "useCrossValidation:" + useCrossValidation;
+		cfiersToBeUsed.put(cfierKey, knn);
+		return cfiersToBeUsed;
+	}
+	
+	public static void main(String[] args) throws Exception{
+		if(args.length == 0)
+		{
+			System.err.println("No path to datasets give. exiting.");
+			return;
+		}
+		
+		final String CLASSIFICATION_RESULT_PATH = "result.csv";
+		final File arffFolder = new File(args[0]);
+		
+		if(!arffFolder.exists())
+		{
+			System.err.println("Given path: " + args[0] + "does not exist. Exiting.");
+			return;
+		}
+		
+		// Objects to store results
+		TreeMap<Double, String> sortedResults = new TreeMap<Double, String>();
+		FileWriter fwriter = new FileWriter(CLASSIFICATION_RESULT_PATH);
+		BufferedWriter resultCsvWriter = new BufferedWriter(fwriter);
+		resultCsvWriter.write("Feature,Classifier,PercentageCorrect\n");
+		
+		// define Classifiers
+		HashMap<String, Classifier> cfiersToBeUsed = generateClassifiers();
+		
+		// run trough datasets
+		for(final File fileEntry : arffFolder.listFiles())
+		{
+			// reading dataset
+			System.out.println("reading: " + fileEntry.getName());
+			Instances dataset = readDataset(fileEntry.getPath());
+			System.out.println("NumInstances = " + dataset.size());
+			
+			// run classifiers on dataset
+			for(Map.Entry<String, Classifier> entry : cfiersToBeUsed.entrySet())
+			{
+				Classifier cfier = entry.getValue();
+				int numIterations = 1;
+				double result = evaluateClassifier(cfier, dataset, numIterations);
+				sortedResults.put(result, fileEntry.getName());
+				
+				//write results to disk
+				resultCsvWriter.write(fileEntry.getName() + "," + entry.getKey() + "," + result + "\n");
+			}				
+		}
+		// write results on screen
+		for(Map.Entry<Double, String> entry : sortedResults.entrySet())
+		{
+			System.out.print("BoW_features: " + entry.getValue() + "\t");
+			System.out.println("correctly classified: " + entry.getKey());
+		}
+		resultCsvWriter.close();
+	}
+}

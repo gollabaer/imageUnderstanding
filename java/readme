@@ -1,0 +1,9 @@
+How to import into eclipse
+
+1. create a new java project
+2. use file->import General - FileSystem to import the code
+2.1 under "Advanced" select "create links in workspace" and "create virtual folders"
+3. Add folowing .jars to Buildpath:
+  path/to/weka<version>/weka.jar
+  path/to/wekafiles/packages/LibSVM/LibSVM.jar
+  path/to/libsvm-<version>/java/libsvm.jar
