@@ -322,5 +322,6 @@ public class ClassificationEvaluator {
 			System.out.println("correctly classified: " + entry.getKey());
 		}
 		resultCsvWriter.close();
+		System.out.println("finished");
 	}
 }
