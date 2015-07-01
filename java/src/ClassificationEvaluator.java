@@ -6,8 +6,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
-import java.util.TreeMap;
 
 import weka.core.Instances;
 import weka.core.SelectedTag;
@@ -285,7 +285,6 @@ public class ClassificationEvaluator {
 		}
 		
 		// Objects to store results
-		TreeMap<Double, String> sortedResults = new TreeMap<Double, String>();
 		FileWriter fwriter = new FileWriter(CLASSIFICATION_RESULT_PATH);
 		BufferedWriter resultCsvWriter = new BufferedWriter(fwriter);
 		resultCsvWriter.write("Feature,Classifier,PercentageCorrectTest,PercentageCorrectTrain\n");
@@ -314,12 +313,6 @@ public class ClassificationEvaluator {
 				resultCsvWriter.flush();
 //				iter.remove();
 			}			
-		}
-		// write results on screen
-		for(Map.Entry<Double, String> entry : sortedResults.entrySet())
-		{
-			System.out.print("BoW_features: " + entry.getValue() + "\t");
-			System.out.println("correctly classified: " + entry.getKey());
 		}
 		resultCsvWriter.close();
 		System.out.println("finished");
