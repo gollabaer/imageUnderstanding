@@ -30,27 +30,27 @@ public class ClassificationEvaluator {
 	}
 	
 	/** @brief split dataset into train and test sets using numSamplesPerClass */
-	public static CvDataset getCvDataset(Instances dataset, int numSamplesPerClass) throws Exception
+	public static CvDataset getCvDataset(Instances dataset, int train_numSamplesPerClass, int test_numSamplesPerClass) throws Exception
 	{
 		int seed = (int) System.currentTimeMillis();
-		return getCvDataset(dataset, numSamplesPerClass, seed);
+		return getCvDataset(dataset, train_numSamplesPerClass, test_numSamplesPerClass, seed);
 	}
 	
 	
 	/**
 	 * @brief split dataset into train and test sets using numSamplesPerClass 
 	 * @param dataset
-	 * @param numSamplesPerClass
+	 * @param train_numSamplesPerClass
 	 * @param seed
 	 * @return
 	 * @throws Exception
 	 */
-	public static CvDataset getCvDataset(Instances dataset, int numSamplesPerClass, int seed) throws Exception
+	public static CvDataset getCvDataset(Instances dataset, int train_numSamplesPerClass, int test_numSamplesPerClass, int seed) throws Exception
 	{
 		CvDataset out = new CvDataset();
 		
 		// Sampling params
-		int percentage = calcPercentage(numSamplesPerClass, dataset);
+		int percentage = calcPercentage(train_numSamplesPerClass, dataset);
 		String filterOptions = "-Z " + percentage + " -no-replacement -B 1";
 		
 		// create ResampleFilter
@@ -84,7 +84,7 @@ public class ClassificationEvaluator {
 			
 			// resample the remaining dataset for a testset
 			resamp.setInvertSelection(false);
-			percentage = calcPercentage(numSamplesPerClass, remainingDataset);
+			percentage = calcPercentage(test_numSamplesPerClass, remainingDataset);
 			resamp.setSampleSizePercent(percentage);
 			resamp.setInputFormat(remainingDataset);
 			Instances testset = Resample.useFilter(remainingDataset, resamp);
@@ -111,14 +111,15 @@ public class ClassificationEvaluator {
 			throw new IllegalArgumentException("num_itterations must be greater than zero");
 		}
 		
-		final int SAMPLES_PER_CLASS = 15;
+		final int TRAIN_SAMPLES_PER_CLASS = 15;
+		final int TEST_SAMPLES_PER_CLASS = 15;
 		double avg_test_correct = 0;
 		double avg_train_correct = 0;
 		
 		for(int iteration = 0; iteration < num_iterations; iteration++)
 		{
 			//split dataset randomly in train and testset
-			CvDataset mySet = getCvDataset(dataset, SAMPLES_PER_CLASS, iteration);
+			CvDataset mySet = getCvDataset(dataset, TRAIN_SAMPLES_PER_CLASS, TEST_SAMPLES_PER_CLASS, iteration);
 			
 			//train classifier
 			cfier.buildClassifier(mySet.getTrainingset());
@@ -197,7 +198,7 @@ public class ClassificationEvaluator {
 	public static void main(String[] args) throws Exception{
 		if(args.length == 0)
 		{
-			System.err.println("No path to datasets give. exiting.");
+			System.err.println("No path to datasets given. exiting.");
 			return;
 		}
 		
