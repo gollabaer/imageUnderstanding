@@ -104,7 +104,7 @@ public class ClassificationEvaluator {
 	 * @return the average percentage of correctly classified instanced throughout the iterations 
 	 * @throws Exception
 	 */
-	public static double evaluateClassifier(Classifier cfier, Instances dataset, int num_iterations) throws Exception
+	public static double[] evaluateClassifier(Classifier cfier, Instances dataset, int num_iterations) throws Exception
 	{
 		if(num_iterations <= 0)
 		{
@@ -136,10 +136,14 @@ public class ClassificationEvaluator {
 		}
 		avg_test_correct /= num_iterations;
 		avg_train_correct /= num_iterations;
+		double[] metrics = new double[2];
+		metrics[0] = avg_test_correct;
+		metrics[1] = avg_train_correct;
+		
 //		System.out.println("Test Average correctly classified: " + avg_test_correct);
 //		System.out.println("Train Average correctly classified: " + avg_train_correct);
 		
-		return avg_test_correct;
+		return metrics;
 	}
 	
 	private static Instances readDataset(String filepath)
@@ -215,7 +219,7 @@ public class ClassificationEvaluator {
 		TreeMap<Double, String> sortedResults = new TreeMap<Double, String>();
 		FileWriter fwriter = new FileWriter(CLASSIFICATION_RESULT_PATH);
 		BufferedWriter resultCsvWriter = new BufferedWriter(fwriter);
-		resultCsvWriter.write("Feature,Classifier,PercentageCorrect\n");
+		resultCsvWriter.write("Feature,Classifier,PercentageCorrectTest,PercentageCorrectTrain\n");
 		
 		// define Classifiers
 		HashMap<String, Classifier> cfiersToBeUsed = generateClassifiers();
@@ -228,17 +232,19 @@ public class ClassificationEvaluator {
 			Instances dataset = readDataset(fileEntry.getPath());
 			System.out.println("NumInstances = " + dataset.size());
 			
-			// run classifiers on dataset
-			for(Map.Entry<String, Classifier> entry : cfiersToBeUsed.entrySet())
+			Iterator<Map.Entry<String,Classifier>> iter = cfiersToBeUsed.entrySet().iterator();
+			while(iter.hasNext())
 			{
+				Map.Entry<String,Classifier> entry = iter.next();
 				Classifier cfier = entry.getValue();
 				int numIterations = 1;
-				double result = evaluateClassifier(cfier, dataset, numIterations);
-				sortedResults.put(result, fileEntry.getName());
-				
-				//write results to disk
-				resultCsvWriter.write(fileEntry.getName() + "," + entry.getKey() + "," + result + "\n");
-			}				
+				double[] results = evaluateClassifier(cfier, dataset, numIterations);
+				double testCorrect = results[0];
+				double trainCorrect = results[1];
+				resultCsvWriter.write(fileEntry.getName() + "," + entry.getKey() + "," + testCorrect + "," + trainCorrect + "\n");
+				resultCsvWriter.flush();
+//				iter.remove();
+			}			
 		}
 		// write results on screen
 		for(Map.Entry<Double, String> entry : sortedResults.entrySet())
