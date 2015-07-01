@@ -168,25 +168,26 @@ public class ClassificationEvaluator {
 		kernels.put(1, "polynomial");
 		kernels.put(2, "rbf");
 		kernels.put(3, "sigmoid");
-		LibSVM svm1 = new LibSVM();
 		final double GAMMA = 12;
-		final double COEF0 = 200;
+		final double COEF0 = 300;
 		final double COST = 2500;
 		int kernelType = 1;
-		svm1.setKernelType(new SelectedTag(kernelType, LibSVM.TAGS_KERNELTYPE));
-		svm1.setGamma(GAMMA);
-		svm1.setCoef0(COEF0);
-		svm1.setCost(COST);
-		String cfierKey = "SVM" + PARAMETER_SEPERATOR + "gamma:" + GAMMA + PARAMETER_SEPERATOR + "Kerneltype:" +
-		kernels.get(svm1.getKernelType()) + PARAMETER_SEPERATOR + "cost:" + COST + PARAMETER_SEPERATOR + "coef0:" + COEF0;
-		cfiersToBeUsed.put(cfierKey, svm1);
+		int degree = 5;
+		String cfierKey;
+		
+		createSVM(cfiersToBeUsed, PARAMETER_SEPERATOR, kernels, GAMMA, COEF0,
+				COST, kernelType, degree);
+		
+//		svmParamGridSearch(cfiersToBeUsed, PARAMETER_SEPERATOR, kernels);
+		
+		
 		
 		// Random Forest
 		final int NUM_TREES = 800;
 		RandomForest randForest =  new RandomForest();
 		randForest.setNumTrees(NUM_TREES);
 		cfierKey = "RandomForest" + PARAMETER_SEPERATOR + "NumTrees:" + NUM_TREES;
-		cfiersToBeUsed.put(cfierKey, randForest);
+//		cfiersToBeUsed.put(cfierKey, randForest);
 		
 		// KNN
 		int k = 15;
@@ -195,8 +196,76 @@ public class ClassificationEvaluator {
 		knn.setCrossValidate(useCrossValidation);
 		knn.setKNN(k);
 		cfierKey = "knn" + PARAMETER_SEPERATOR + "k:" + k + PARAMETER_SEPERATOR + "useCrossValidation:" + useCrossValidation;
-		cfiersToBeUsed.put(cfierKey, knn);
+//		cfiersToBeUsed.put(cfierKey, knn);
 		return cfiersToBeUsed;
+	}
+
+	private static void createSVM(HashMap<String, Classifier> cfiersToBeUsed,
+			final String PARAMETER_SEPERATOR, HashMap<Integer, String> kernels,
+			final double GAMMA, final double COEF0, final double COST,
+			int kernelType, int degree) {
+		String cfierKey;
+		LibSVM svm1 = new LibSVM();
+		svm1.setKernelType(new SelectedTag(kernelType, LibSVM.TAGS_KERNELTYPE));
+		svm1.setGamma(GAMMA);
+		svm1.setCoef0(COEF0);
+		svm1.setCost(COST);
+		svm1.setDegree(degree);
+		cfierKey = "SVM" + PARAMETER_SEPERATOR + "gamma:" + GAMMA + PARAMETER_SEPERATOR + "Kerneltype:" +
+		kernels.get(svm1.getKernelType().getSelectedTag().getID()) + PARAMETER_SEPERATOR + "cost:" + COST + PARAMETER_SEPERATOR + "coef0:" + COEF0;
+		cfiersToBeUsed.put(cfierKey, svm1);
+	}
+
+	/**
+	 * @param cfiersToBeUsed [out] list of svm classifiers with different parameters
+	 * @param PARAMETER_SEPERATOR
+	 * @param kernels map containing names for kernels with corresponding keys
+	 */
+	private static void svmParamGridSearch(
+			HashMap<String, Classifier> cfiersToBeUsed,
+			final String PARAMETER_SEPERATOR, HashMap<Integer, String> kernels) {
+		String cfierKey;
+		// exclude sigmoid since tests showed bad results
+		for(int kernelType = 0; kernelType < 3; kernelType++)
+		{
+			for(int cost = 1; cost < 602; cost += 300)
+			{
+				for(int gamma = 0; gamma < 31; gamma += 10)
+				{
+					for(int coef = 0; coef < 301; coef += 200)
+					{
+						for(int degree = 2; degree < 7; degree++)
+						{
+							LibSVM svm1 = new LibSVM();
+							svm1.setKernelType(new SelectedTag(kernelType, LibSVM.TAGS_KERNELTYPE));
+							svm1.setGamma(gamma);
+							svm1.setCoef0(coef);
+							svm1.setCost(cost);
+							svm1.setDegree(degree);
+							cfierKey = "SVM" + PARAMETER_SEPERATOR + "gamma:" + gamma + PARAMETER_SEPERATOR + "Kerneltype:" +
+							kernels.get(svm1.getKernelType().getSelectedTag().getID()) + PARAMETER_SEPERATOR + "cost:" + cost + PARAMETER_SEPERATOR + "coef0:" + coef;
+							if(kernelType == 1)
+							{
+								cfierKey += PARAMETER_SEPERATOR + "degree: " + degree;
+							}
+							cfiersToBeUsed.put(cfierKey, svm1);
+							if(kernelType != 1) // only setup svm once if not using polynomal kernal (1)
+							{
+								break;
+							}
+						}
+						if(!(kernelType == 1 || kernelType == 3))
+						{
+							break;
+						}
+					}
+					if(kernelType == 0)
+					{
+						break;
+					}
+				}
+			}
+		}
 	}
 	
 	public static void main(String[] args) throws Exception{
